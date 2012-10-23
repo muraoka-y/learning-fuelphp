@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="fuel/app"/>
+	<buildpathentry kind="src" path="fuel/core"/>
+	<buildpathentry kind="src" path="fuel/packages/auth"/>
+	<buildpathentry kind="src" path="fuel/packages/email"/>
+	<buildpathentry kind="src" path="fuel/packages/oil"/>
+	<buildpathentry kind="src" path="fuel/packages/orm"/>
+	<buildpathentry kind="src" path="fuel/packages/parser"/>
+	<buildpathentry kind="src" path="public"/>
+	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+</buildpath>
