@@ -7,14 +7,7 @@ include_once('PHPUnit/Autoload.php');
  * Set error reporting and display errors settings.  You will want to change these when in production.
 */
 error_reporting(E_ALL);
-
-//for Makegood
 ini_set('display_errors', 1);
-$_SERVER['doc_root'] = '../../';
-$_SERVER['app_path'] = 'fuel/app';
-$_SERVER['core_path'] = 'fuel/core';
-$_SERVER['package_path'] = 'fuel/packages';
-
 
 $app_path		= trim($_SERVER['app_path'], '/').'/';
 $package_path	= trim($_SERVER['package_path'], '/').'/';
