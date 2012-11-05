@@ -4,7 +4,7 @@
 //3検証ok->確認ページ、error->入力ページ表示
 
 //Contoroler template classの継承
-class  Controller_Form extends Controller_Template
+class  Controller_Form extends Controller_Public
 {
 	public function action_index() //action index mehtod 追加
 	{
@@ -42,10 +42,11 @@ class  Controller_Form extends Controller_Template
 	public function action_confirm()
 	{
 		$val = $this->get_validation()->add_callable('MyValidationRules');
-		//*検証ルールを定義したvalidationオブジェクトを作成したget_validationメソッドを
-		//**で取得
-		//var_dump(get_class_methods($val));exit;
-		//validationのrunメソッドで実行
+		/* 検証ルールを定義したvalidationオブジェクトを作成したget_validationメソッドを
+		 * add_callableで取得
+		 * validationのrunメソッドで実行
+		 */ 
+		
 		if ($val->run())
 		{
 			$data['input'] = $val->validated();//検証後データを配列$data['input']に代入
