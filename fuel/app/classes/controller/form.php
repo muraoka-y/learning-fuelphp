@@ -32,7 +32,7 @@ class  Controller_Form extends Controller_Public
 			->add_rule('no_tab_and_newline')
 			->add_rule('max_length', 50);
 
-		$val->add('email','メール')
+		$val->add('email','メールアドレス')
 			->add_rule('trim')
 			->add_rule('required')
 			->add_rule('max_length',100)
@@ -55,7 +55,6 @@ class  Controller_Form extends Controller_Public
 		 * add_callableで取得
 		* validationのrunメソッドで実行
 		*/
-
 		if ($val->run())
 		{
 			$data['input'] = $val->validated();//検証後データを配列$data['input']に代入
@@ -67,7 +66,7 @@ class  Controller_Form extends Controller_Public
 			$form->repopulate();
 			$this->template->title = 'コンタクトフォーム:エラー';
 			$this->template->content = View::forge('form/index');
-			$this->template->content ->set_safe('html_error', $val->show_errors());
+			$this->template->content->set_safe('html_error', $val->show_errors());
 			$this->template->content->set_safe('html_form', $form->build('form/confirm'));
 		}
 	}
@@ -121,7 +120,7 @@ class  Controller_Form extends Controller_Public
 	public function get_form()
 	{
 		$form = Fieldset::forge();
-
+		
 		$form->add('name', '名前')
 			->add_rule('trim')
 			->add_rule('required')

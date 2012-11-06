@@ -35,7 +35,7 @@ class MyInputFilters
 			array_map(array('MyInputFilters', 'check_control'), $value);
 			return $value;
 		}
-		
+
 		//改行コードとタブをのぞく制御文字が含まれていないか
 		if (preg_match('/\A[\r\n\t[:^cntrl:]]*\z/u', $value) === 1)
 		{

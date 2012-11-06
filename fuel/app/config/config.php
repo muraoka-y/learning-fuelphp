@@ -121,7 +121,7 @@ return array(
 		 * How much is dependant on how much input data there is.
 		 */
 		'input_filter'  => array(
-			'MyIputFilters::check_encoding',
+			'MyInputFilters::check_encoding',
 			'MyInputFilters::check_control',
 		),
 

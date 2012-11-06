@@ -26,9 +26,13 @@ echo Form::hidden('comment',$input['comment']);
 echo Form::open('form/send'); 
 
 //CSRF対策
-echo Form::hidden(Config::get('security.csrf_token'));
+echo Form::hidden(Config::get('security.csrf_token_key'),Security::fetch_token());
 
-echo Form::hidden('comment',$input['comment']);
-echo Form::hidden('comment',$input['comment']);
+echo Form::hidden('name',$input['name']);
+echo Form::hidden('email',$input['email']);
 echo Form::hidden('comment',$input['comment']);
 ?>
+<div class="actions">
+	<?php echo Form::submit('submit2','送信'); ?>
+</div>
+<?php echo Form::close(); ?>
