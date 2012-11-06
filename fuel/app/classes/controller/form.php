@@ -8,10 +8,18 @@ class  Controller_Form extends Controller_Public
 {
 	public function action_index() //action index mehtod 追加
 	{
-		$this->template->title = 'コンタクトフォーム';//template.phpの中の$title $contentに対応する
-		$this->template->content = View::forge('form/index');
-	}
+		$form = $this->get_form();
 
+		if (Input::method() === 'POST')
+		{
+			$form->repopulate();
+		}
+
+
+		$this->template->title = 'コンタクトフォーム';
+		$this->template->content = View::forge('form/index');
+		$this->template->content->set_safe('html_form', $form->build('form/confirm'));
+	}
 
 	//検証ルールの定義
 	public function get_validation()
@@ -19,21 +27,21 @@ class  Controller_Form extends Controller_Public
 		$val= Validation::forge();//validationオブジェクト生成
 		//addメソッドでフィールド名とラベル名追加、add_ruleメソッドで整形ルール追加
 		$val->add('name','名前')
-		->add_rule('trim')
-		->add_rule('required')
-		->add_rule('no_tab_and_newline')
-		->add_rule('max_length', 50);
+			->add_rule('trim')
+			->add_rule('required')
+			->add_rule('no_tab_and_newline')
+			->add_rule('max_length', 50);
 
 		$val->add('email','メール')
-		->add_rule('trim')
-		->add_rule('required')
-		->add_rule('max_length',100)
-		->add_rule('no_tab_and_newline')
-		->add_rule('valid_email');
+			->add_rule('trim')
+			->add_rule('required')
+			->add_rule('max_length',100)
+			->add_rule('no_tab_and_newline')
+			->add_rule('valid_email');
 
 		$val->add('comment','コメント')
-		->add_rule('required')
-		->add_rule('max_length',400);
+			->add_rule('required')
+			->add_rule('max_length',400);
 
 		return $val;
 	}
@@ -41,12 +49,13 @@ class  Controller_Form extends Controller_Public
 	//action_confirmメソッドをformコントローラーに追加
 	public function action_confirm()
 	{
-		$val = $this->get_validation()->add_callable('MyValidationRules');
+		$form = $this->get_form();
+		$val = $form->validation()->add_callable('MyValidationRules');
 		/* 検証ルールを定義したvalidationオブジェクトを作成したget_validationメソッドを
 		 * add_callableで取得
-		 * validationのrunメソッドで実行
-		 */ 
-		
+		* validationのrunメソッドで実行
+		*/
+
 		if ($val->run())
 		{
 			$data['input'] = $val->validated();//検証後データを配列$data['input']に代入
@@ -55,10 +64,11 @@ class  Controller_Form extends Controller_Public
 		}
 		else
 		{
+			$form->repopulate();
 			$this->template->title = 'コンタクトフォーム:エラー';
 			$this->template->content = View::forge('form/index');
 			$this->template->content ->set_safe('html_error', $val->show_errors());
-			//show_errorsメソッドがhtmlでerroeメッセージを返す、set_safe()メソッドでヴューにセットする
+			$this->template->content->set_safe('html_form', $form->build('form/confirm'));
 		}
 	}
 
@@ -69,13 +79,13 @@ class  Controller_Form extends Controller_Public
 		{
 			return 'ページ遷移が正しくありません';
 		}
-		$val = $this->get_validation();
+		$val = $this->get_validation()->add_callable('MyValidationRules');
 
 		if (! $val->run())
 		{
 			$this->template->title = 'コンタクトフォーム';
 			$this->template->content = View::forge('form/index');
-			$this->template->content -> set_safe('html_error',$val->show_errors());
+			$this->template->content->set_safe('html_error',$val->show_errors());
 			return;
 		}
 
@@ -85,9 +95,11 @@ class  Controller_Form extends Controller_Public
 		//メール送信
 		try
 		{
+			$form->repopulate();
 			$this->sendmail($data);
 			$this->template->title = 'コンタクトフォーム: 送信完了';
 			$this->template->content->set_safe('html_error',$val->show_errors());
+			$this->template->content->set_safe('html_form', $form->build('form/confirm'));
 			return;
 		}
 		catch (EmailValidationFailedException $e)
@@ -97,37 +109,38 @@ class  Controller_Form extends Controller_Public
 			);
 			$html_error = '<p>メールを送信できませんでした。</p>';
 		}
-
+		$form->repopulate();
 		$this->template->title='コンタクトフォーム: 送信エラー';
 		$this->template->content=View::forge('form/index');
 		$this->template->content->set_safe('html_error',$html_error);
+		$this->template->content->set_safe('html_form', $form->build('form/confirm'));
+
 	}
 
-	//メールの作成
-	public function build_mail($post)
+	// フォームの定義
+	public function get_form()
 	{
-		$data['form']	= $post['email'];
-		$data['form_name']	= $post['name'];
-		$data['to']	= 'info@example.jp';
-		$data['to_name']	= '管理者';
-		$data['subject']	= 'コンタクトフォーム';
+		$form = Fieldset::forge();
 
-		$ip = Input::ip();
-		$agent = Input::user_agent();
+		$form->add('name', '名前')
+			->add_rule('trim')
+			->add_rule('required')
+			->add_rule('no_tab_and_newline')
+			->add_rule('max_length', 50);
 
-		$data['body']	= <<< END
-------------------------------------------------------------------------------------
-	名前:{$post['name']}
-	メールアドレス:{$post['name']}
-	IPアドレス:$ip
-	ブラウザ:$agent
-------------------------------------------------------------------------------------
-コメント:
-{$post['comment']}
-------------------------------------------------------------------------------------
-END;
+		$form->add('email', 'メールアドレス')
+			->add_rule('trim')
+			->add_rule('required')
+			->add_rule('no_tab_and_newline')
+			->add_rule('max_length', 100)
+			->add_rule('valid_email');
 
+		$form->add('comment', 'コメント',
+				array('type' => 'textarea', 'cols' => 70, 'rows' => 6))
+			->add_rule('required')
+			->add_rule('max_length', 400);
 
-return $data;
+		$form->add('submit', '', array('type'=>'submit', 'value' => '確認'));
+		return $form;
 	}
 }

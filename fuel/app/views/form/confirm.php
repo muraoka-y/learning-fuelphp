@@ -9,7 +9,7 @@
 </p>
 <p>
 	コメント:
-	<?php echo n12br($input['comment']); ?>
+	<?php echo nl2br($input['comment']); ?>
 </p>
 
 <?php 

@@ -1,7 +1,7 @@
 <?php
 
 return array(
-		'required'		=>':labe 欄は必須です',
+		'required'		=>':label 欄は必須です',
 		'min_length'  	=>':label 欄は :param:1 文字以上にしてください.',
 		'max_length'  	=>':label 欄は :param:1 文字を超えないようにしてください',
 		'exact_length'  =>':The field :label must contain exactly :param:1 characters.',
